@@ -7,8 +7,9 @@ describe('Account Mongo Repository', () => {
     await MongoHelper.connect(process.env.MONGO_URL as string)
   })
 
-  afterAll(async () => {
-    await MongoHelper.disconnect()
+  beforeEach(async () => {
+    const accountCollection = MongoHelper.getCollection('accounts')
+    await accountCollection.deleteMany({})
   })
 
   const makeSut = (): AccountMongoRepository => {
@@ -27,5 +28,9 @@ describe('Account Mongo Repository', () => {
     expect(account.name).toBe('any_name')
     expect(account.email).toBe('any_email@mail.com')
     expect(account.password).toBe('any_password')
+  })
+
+  afterAll(async () => {
+    await MongoHelper.disconnect()
   })
 })
