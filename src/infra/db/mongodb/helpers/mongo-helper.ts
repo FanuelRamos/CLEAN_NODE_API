@@ -1,4 +1,4 @@
-import { MongoClient, Collection } from 'mongodb'
+import { MongoClient, type Collection } from 'mongodb'
 import { AccountModel } from '../../../../domain/models/account'
 
 export const MongoHelper = {
