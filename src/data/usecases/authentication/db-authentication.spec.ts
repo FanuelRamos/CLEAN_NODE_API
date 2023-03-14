@@ -39,17 +39,17 @@ const makeHashComparer = (): HashComparer => {
 interface SutTypes {
   sut: DbAuthentication
   loadAccountByEmailRepositoryStub: LoadAccountByEmailRepository
-  hashComparer: HashComparer
+  hashComparerStub: HashComparer
 }
 
 const makeSut = (): SutTypes => {
   const loadAccountByEmailRepositoryStub = makeLoadAccountByEmailRepository()
-  const hashComparer = makeHashComparer()
-  const sut = new DbAuthentication(loadAccountByEmailRepositoryStub, hashComparer)
+  const hashComparerStub = makeHashComparer()
+  const sut = new DbAuthentication(loadAccountByEmailRepositoryStub, hashComparerStub)
   return {
     sut,
     loadAccountByEmailRepositoryStub,
-    hashComparer
+    hashComparerStub
   }
 }
 
@@ -78,9 +78,16 @@ describe('DbAuthentication UseCase', () => {
   })
 
   test('Should call HashComparer with correct values', async () => {
-    const { sut, hashComparer } = makeSut()
-    const comparerSpy = jest.spyOn(hashComparer, 'compare')
+    const { sut, hashComparerStub } = makeSut()
+    const comparerSpy = jest.spyOn(hashComparerStub, 'compare')
     await sut.auth(makeFakeAuthentication())
     expect(comparerSpy).toHaveBeenCalledWith('any_password', 'hashed_password')
+  })
+
+  test('Should throw if HashComparer throws', async () => {
+    const { sut, hashComparerStub } = makeSut()
+    jest.spyOn(hashComparerStub, 'compare').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
+    const promise = sut.auth(makeFakeAuthentication())
+    await expect(promise).rejects.toThrow()
   })
 })
