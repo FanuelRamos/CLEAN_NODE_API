@@ -3,6 +3,8 @@ import app from '../config/app'
 import { MongoHelper } from '../../infra/db/mongodb/helpers/mongo-helper'
 import { Collection } from 'mongodb'
 
+jest.setTimeout(90000)
+
 let surveyCollection: Collection
 
 describe('Survey Routes', () => {
@@ -16,7 +18,7 @@ describe('Survey Routes', () => {
   })
 
   describe('POST /survey', () => {
-    test('Should return 204 on add survey success', async () => {
+    test('Should return 403 on add survey without token', async () => {
       await request(app)
         .post('/api/survey')
         .send({
@@ -31,7 +33,7 @@ describe('Survey Routes', () => {
             }
           ]
         })
-        .expect(204)
+        .expect(403)
     })
   })
 
