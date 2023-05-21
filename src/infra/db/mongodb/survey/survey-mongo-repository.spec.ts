@@ -30,7 +30,8 @@ describe('SurveyMongoRepository unit test', () => {
         {
           answer: 'other_answer'
         }
-      ]
+      ],
+      date: new Date()
     })
     const survey = await surveyCollection.findOne({ question: 'any_question' })
     expect(survey).toBeTruthy()
